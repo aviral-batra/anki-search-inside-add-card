@@ -21,14 +21,16 @@ import aqt
 import utility.misc
 import state
 import functools
-
 from ..notes import get_read_today_count
-
+import PyQt6
+from PyQt6 import QtCore
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QDialog
 class TimerElapsedDialog(QDialog):
     """ Dialog that is shown after the tomato timer finished. """
 
     def __init__(self, parent):
-        QDialog.__init__(self, parent, Qt.FramelessWindowHint)
+        QDialog.__init__(self, parent, QtCore.Qt.WindowType.FramelessWindowHint)
 
         self.setModal(True)
         self.mw     = aqt.mw
@@ -43,7 +45,7 @@ class TimerElapsedDialog(QDialog):
 
         c_lbl = QLabel(self)
         c_icon   = "hourglass_night.png" if state.is_nightmode() else "hourglass.png"
-        c_pixmap  = QPixmap(utility.misc.get_web_folder_path() + f"icons/{c_icon}").scaled(QSize(35, 35), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        c_pixmap  = QPixmap(utility.misc.get_web_folder_path() + f"icons/{c_icon}").scaled(QSize(35, 35), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         c_lbl.setPixmap(c_pixmap)
         hbox    = QHBoxLayout()
         hbox.addStretch()

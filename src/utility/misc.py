@@ -29,11 +29,14 @@ import shutil
 import importlib.util
 from typing import Optional
 from pathlib import Path
+from PyQt6.QtCore import QMarginsF, Qt
+from PyQt6.QtGui import QPageSize, QPageLayout
+from PyQt6.QtPrintSupport import QPrinter
 from aqt import mw
 from aqt.qt import *
 from aqt.utils import tooltip, showInfo
 from urllib.parse import urlparse
-from anki.utils import isMac, isLin
+from anki.utils import is_mac, is_lin
 
 
 # region File / Folder Utils
@@ -309,7 +312,7 @@ def img_src_base_path():
 def qlabel_image(icon_name, w, h):
     """ Return a QLabel with the given icon as pixmap. """
     lbl     = QLabel()
-    pixmap  = QPixmap(get_web_folder_path() + f"icons/{icon_name}").scaled(QSize(w, h), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    pixmap  = QPixmap(get_web_folder_path() + f"icons/{icon_name}").scaled(QSize(w, h), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
     lbl.setPixmap(pixmap)
     return lbl
 
@@ -338,10 +341,12 @@ def url_to_pdf(url, output_path, cb_after_finish = None):
     temp.load(QUrl(url))
 
     def save_pdf(finished):
+        page_layout = QPageLayout()
+        page_layout.setUnits(QPageLayout.Unit.Millimeter)
+        page_layout.setMargins(QMarginsF(10, 10, 10, 10))
+        page_layout.setOrientation(QPageLayout.Orientation.Landscape)
         printer = QPrinter()
-        printer.setPageMargins(10, 10, 10, 10, QPrinter.Millimeter)
-        printer.setPageSize(QPrinter.A3)
-        printer.setPageOrientation(QPageLayout.Portrait)
+        printer.setPageLayout(page_layout)
         temp.page().printToPdf(output_path, printer.pageLayout())
 
     temp.loadFinished.connect(save_pdf)
